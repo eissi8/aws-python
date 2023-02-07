@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ddb-sort-key
+  labels:
+    app: ddb-sort-key
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ddb-sort-key
+  template:
+    metadata:
+      labels:
+        app: ddb-sort-key
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: karpenter.sh/capacity-type
+                  operator: Exists
+      containers:
+      - name: ddb-sort-key
+        image: 592446325190.dkr.ecr.ap-northeast-2.amazonaws.com/ddb-sort-key 
+        env:
+        - name: DDB_NAME
+          value: test2
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "200m"

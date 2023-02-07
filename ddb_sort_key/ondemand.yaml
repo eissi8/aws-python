@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ondemand
+  labels:
+    app: ondemand
+spec:
+  replicas: 100
+  selector:
+    matchLabels:
+      app: ondemand
+  template:
+    metadata:
+      labels:
+        app: ondemand
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: node.kubernetes.io/instance-type
+                  operator: In
+                  values:
+                  - m5zn.6xlarge
+      containers:
+      - name: ondemand
+        image: 592446325190.dkr.ecr.ap-northeast-2.amazonaws.com/ddb-sort-key
+        env:
+        - name: DDB_NAME
+          value: test
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "200m"

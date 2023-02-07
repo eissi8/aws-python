@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: provisioned
+  labels:
+    app: provisioned
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: provisioned
+  template:
+    metadata:
+      labels:
+        app: provisioned
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: node.kubernetes.io/instance-type
+                  operator: In
+                  values:
+                  - m5zn.6xlarge
+      containers:
+      - name: provisioned
+        image: 592446325190.dkr.ecr.ap-northeast-2.amazonaws.com/ddb-single-key
+        env:
+        - name: DDB_NAME
+          value: provisioned
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "200m"

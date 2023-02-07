@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ddb-sort-key
+  labels:
+    app: ddb-sort-key
+spec:
+  replicas: 100
+  selector:
+    matchLabels:
+      app: ddb-sort-key
+  template:
+    metadata:
+      labels:
+        app: ddb-sort-key
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                - key: node.kubernetes.io/instance-type
+                  operator: In
+                  values:
+                  - m5zn.6xlarge
+      containers:
+      - name: ddb-sort-key
+        image: 592446325190.dkr.ecr.ap-northeast-2.amazonaws.com/ddb-sort-key 
+        env:
+        - name: DDB_NAME
+          value: p15000
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "200m"
